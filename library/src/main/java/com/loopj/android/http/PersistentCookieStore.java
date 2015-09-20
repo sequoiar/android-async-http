@@ -58,7 +58,25 @@ public class PersistentCookieStore implements CookieStore {
      * @param context Context to attach cookie store to
      */
     public PersistentCookieStore(Context context) {
-        cookiePrefs = context.getSharedPreferences(COOKIE_PREFS, 0);
+        this(context, null);
+    }
+
+    /**
+     * Construct a persistent cookie store with Session Name
+     *
+     * @param context Context to attach cookie store to
+     * @param session_name Session to identify by cookie store
+     */
+    public PersistentCookieStore(Context context, String session_name) {
+        // check session name /////////////
+        String cookie_prefs = COOKIE_PREFS;
+        if (session_name != null && session_name != "") {
+            cookie_prefs += "___" + session_name;
+        }
+        ///////////////////////////////////
+
+
+        cookiePrefs = context.getSharedPreferences(cookie_prefs, 0);
         cookies = new ConcurrentHashMap<String, Cookie>();
 
         // Load any previously stored cookies into the store
@@ -79,6 +97,7 @@ public class PersistentCookieStore implements CookieStore {
             clearExpired(new Date());
         }
     }
+
 
     @Override
     public void addCookie(Cookie cookie) {
